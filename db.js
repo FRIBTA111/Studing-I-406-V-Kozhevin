@@ -1,6 +1,7 @@
 import Database from "better-sqlite3";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { create } from "domain";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const db = new Database(join(__dirname, "conf.db"));
@@ -184,6 +185,21 @@ class RequestModel {
       .prepare(`UPDATE ${this.table} SET status = ? WHERE id = ?`)
       .run(status, id);
   }
+}
+create({ userId, roomId, dateStart, payment}){
+  const r = db.prepare(`
+    INSERT INTO ${this.table}(user_id,room_id,date_start, payment)
+    VALUES (?,?,?,?)
+    `).run(userId, roomId, dateStart, payment);
+    return this.findById(r.lastInsertRowid);
+}
+create({ login, password, fio, phone, email}){
+  const hash = bcrypt.hashSync(password, 10);
+  const r = db.prepare(`
+    INSERT INTO ${this.table}(login, password, fio, phone, email)
+    VALYES (?,?,?,?,?)
+    `).run(login, hash, fio, phone, email);
+    return this.findById(r.lastInsertRowid);
 }
 export const User = new UserModel();
 export const Room = new RoomModel();

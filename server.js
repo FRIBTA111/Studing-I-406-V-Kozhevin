@@ -5,6 +5,18 @@ import db from "./db.js";
 import { User } from "./db.js";
 import { Room } from "./db.js";
 import { Request } from "./db.js";
+import bcrypt from "bcryptjs";
+
+const hash = bcrypt.hashSync('demo, 10');
+console.log(">>>", hash)
+
+const newRequest = Request.create({
+  userId:1,
+  roomId:2,
+  dateStart:"2027-04-10",
+});
+console.log("Созданная заявка:");
+console.log(newRequest);
 
 console.log("Пользователь с id=1:", User.findById(1));
 console.log("Пользователь с логином ivan:", User.findByLogin("ivan"));
@@ -108,4 +120,8 @@ zhopa.get("/dashboard", (req, res) => {
 });
 zhopa.listen(PORT, () => {
   console.log(`Сервер:http://localhost:${PORT}`);
+});
+zhopa.get('/create',(req,res)=>{
+    const rooms = Rooms.findAll()
+    res.render("create_request",{rooms, errors:[]});
 });
