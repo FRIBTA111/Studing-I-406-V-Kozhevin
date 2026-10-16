@@ -1,5 +1,24 @@
 import express from "express";
 import db from "./db.js";
+import { User } from "./db.js";
+import { Room } from "./db.js";
+import { Request } from "./db.js";
+
+console.log("Пользователь с id=1:", User.findById(1));
+console.log("Пользователь с логином ivan:", User.findByLogin("ivan"));
+console.log("Все пользователи:", User.findAll());
+console.log("Кол-во пользователей:", User.count());
+console.log("Пользователь с логином petr:", User.exist("petr"));
+
+console.log("Все комнаты:", Room.findAll());
+console.log("Комната с id=1:", Room.findById(1));
+console.log("Кол-во комнат:", Room.count());
+console.log("Тип комнаты открыта:", Room.findByType("Открыта"));
+
+console.log("Запрос с id=1:", Request.findById(1));
+console.log("Запрос пользователя с id=1:", Request.findByUser(1));
+console.log("Все запросы (JOIN):", Request.findAllDetailed());
+console.log("Кол-во запросов:", Request.count());
 
 const users = db.prepare("SELECT * FROM users").all();
 console.log("Все пользователи:");

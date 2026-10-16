@@ -111,4 +111,81 @@ if (reviewe === 0) {
   stut.run("nikita", "2", "Было так себе", "2");
   console.log("Тестовая таблица отзывов на проверку");
 }
+class UserModel {
+  constructor() {
+    this.table = "users";
+  }
+  findById(id) {
+    return db.prepare(`SELECT * FROM ${this.table} WHERE id=?`).get(id);
+  }
+  findByLogin(login) {
+    return db.prepare(`SELECT * FROM ${this.table} WHERE login=?`).get(login);
+  }
+  findAll() {
+    return db.prepare(`SELECT * FROM ${this.table}`).all();
+  }
+  count() {
+    return db.prepare(`SELECT COUNT(*) as total FROM ${this.table}`).get()
+      .total;
+  }
+  exist(login) {
+    return db.prepare(`SELECT * FROM ${this.table} WHERE login=?`).get(login)
+      ? true
+      : false;
+  }
+}
+class RoomModel {
+  constructor() {
+    this.table = "rooms";
+  }
+  findById(id) {
+    return db.prepare(`SELECT * FROM ${this.table} WHERE id=?`).get(id);
+  }
+  findByType(type) {
+    return db.prepare(`SELECT * FROM ${this.table} WHERE type=?`).get(type);
+  }
+  findAll() {
+    return db.prepare(`SELECT * FROM ${this.table}`).all();
+  }
+  count() {
+    return db.prepare(`SELECT COUNT(*) as total FROM ${this.table}`).get()
+      .total;
+  }
+}
+class RequestModel {
+  constructor() {
+    this.table = "requests";
+  }
+  findById(id) {
+    return db.prepare(`SELECT * FROM ${this.table} WHERE id=?`).get(id);
+  }
+  findByUser(user_id) {
+    return db
+      .prepare(
+        `SELECT r.*, rm.name AS room_name FROM ${this.table} r 
+        JOIN rooms rm ON r.room_id = rm.id WHERE r.user_id = ?`,
+      )
+      .all(user_id);
+  }
+  findAllDetailed() {
+    return db
+      .prepare(
+        `SELECT r.*, u.fio AS user_fio, u.login AS user_login, u.phone AS user_phone, u.email AS user_email,
+        rm.name AS room_name, rm.type AS room_type, rm.capacity AS room_capacity FROM ${this.table} r JOIN users u ON r.user_id = u.id JOIN rooms rm ON r.room_id = rm.id`,
+      )
+      .all();
+  }
+  count() {
+    return db.prepare(`SELECT COUNT(*) as total FROM ${this.table}`).get()
+      .total;
+  }
+  updateStatus(id, status) {
+    return db
+      .prepare(`UPDATE ${this.table} SET status = ? WHERE id = ?`)
+      .run(status, id);
+  }
+}
+export const User = new UserModel();
+export const Room = new RoomModel();
+export const Request = new RequestModel();
 export default db;
