@@ -1,13 +1,17 @@
 <h1><%= title %></h1>
-<h1><%= requests.room_name %></h1>
-<h1><%= requests.status %></h1>
 
-<table>
-    <tbody>
-        <tr>
+<% if (typeof errors !== 'undefined' && errors.length) { %>
+    <ul>
+        <% errors.forEach(e => { %>
+            <li><%= e %></li>
+        <% }) %>
+    </ul>
+<% } %>
 
-        </tr>
-    </tbody>
+<form method="POST" action="/login">
+    <input name="Login" placeholder="Логин" required><br>
+    <input name="Password" type="password" placeholder="Пароль" required><br>
+    <button>Войти</button>
     <br>
-    <a href="/register">наЗАД</a>
-</table>
+    <a href="/register">Назад</a>
+</form>
