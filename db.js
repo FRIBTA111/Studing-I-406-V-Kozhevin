@@ -133,6 +133,14 @@ class UserModel {
     return db.prepare(`SELECT * FROM ${this.table} WHERE login=?`).get(login)
       ? true
       : false;
+  } 
+  create({ login, password, fio, phone, email}){
+    const hash = bcrypt.hashSync(password, 10);
+    const r = db.prepare(`
+      INSERT INTO ${this.table}(login, password, fio, phone, email)
+      VALYES (?,?,?,?,?)
+      `).run(login, hash, fio, phone, email);
+      return this.findById(r.lastInsertRowid);
   }
 }
 class RoomModel {
@@ -185,22 +193,16 @@ class RequestModel {
       .prepare(`UPDATE ${this.table} SET status = ? WHERE id = ?`)
       .run(status, id);
   }
+  create({ userId, roomId, dateStart, payment}){
+    const r = db.prepare(`
+      INSERT INTO ${this.table}(user_id,room_id,date_start, payment)
+      VALUES (?,?,?,?)
+      `).run(userId, roomId, dateStart, payment);
+      return this.findById(r.lastInsertRowid);
+  }
 }
-create({ userId, roomId, dateStart, payment}){
-  const r = db.prepare(`
-    INSERT INTO ${this.table}(user_id,room_id,date_start, payment)
-    VALUES (?,?,?,?)
-    `).run(userId, roomId, dateStart, payment);
-    return this.findById(r.lastInsertRowid);
-}
-create({ login, password, fio, phone, email}){
-  const hash = bcrypt.hashSync(password, 10);
-  const r = db.prepare(`
-    INSERT INTO ${this.table}(login, password, fio, phone, email)
-    VALYES (?,?,?,?,?)
-    `).run(login, hash, fio, phone, email);
-    return this.findById(r.lastInsertRowid);
-}
+
+
 export const User = new UserModel();
 export const Room = new RoomModel();
 export const Request = new RequestModel();

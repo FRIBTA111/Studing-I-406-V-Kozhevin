@@ -5,50 +5,17 @@ import db from "./db.js";
 import { User } from "./db.js";
 import { Room } from "./db.js";
 import { Request } from "./db.js";
-import bcrypt from "bcryptjs";
 
-const hash = bcrypt.hashSync('demo, 10');
-console.log(">>>", hash)
+
 
 const newRequest = Request.create({
   userId:1,
   roomId:2,
   dateStart:"2027-04-10",
+  payment:"СБП",
 });
 console.log("Созданная заявка:");
 console.log(newRequest);
-
-console.log("Пользователь с id=1:", User.findById(1));
-console.log("Пользователь с логином ivan:", User.findByLogin("ivan"));
-console.log("Все пользователи:", User.findAll());
-console.log("Кол-во пользователей:", User.count());
-console.log("Пользователь с логином petr:", User.exist("petr"));
-
-console.log("Все комнаты:", Room.findAll());
-console.log("Комната с id=1:", Room.findById(1));
-console.log("Кол-во комнат:", Room.count());
-console.log("Тип комнаты открыта:", Room.findByType("Открыта"));
-
-console.log("Запрос с id=1:", Request.findById(1));
-console.log("Запрос пользователя с id=1:", Request.findByUser(1));
-console.log("Все запросы (JOIN):", Request.findAllDetailed());
-console.log("Кол-во запросов:", Request.count());
-
-const users = db.prepare("SELECT * FROM users").all();
-console.log("Все пользователи:");
-console.log(users);
-
-const rooms = db.prepare("SELECT * FROM rooms").all();
-console.log("Все комнаты:");
-console.log(rooms);
-
-const requests = db.prepare("SELECT * FROM requests").all();
-console.log("Все данные:");
-console.log(requests);
-
-const reviewes = db.prepare("SELECT * FROM reviewes").all();
-console.log("Все отзывы:");
-console.log(reviewes);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const zhopa = express();
