@@ -97,9 +97,16 @@ zhopa.post("/register", (req, res) => {
   res.redirect("/login");
 });
 zhopa.get("/login", (req, res) => {
+  const flash = req.session.flash || null;
+  delete req.session.flash;
   res.render("login", {
     title: "Авторизация",
     errors: [],
+  });
+  res.render("auth", {
+    mode: "login",
+    error: "Неверный логин или пароль",
+    flash: null,
   });
 });
 zhopa.post("/login", (req, res) => {
@@ -170,11 +177,6 @@ zhopa.use((req, res, next) => {
     req.session.lastActivity = now;
   }
   next();
-});
-res.render("auth", {
-  mode: "login",
-  error: "Неверный логин или пароль",
-  flash: null,
 });
 zhopa.all("/logout", (req, res) => {
   req.session.destroy(() => res.redirect("/login"));
