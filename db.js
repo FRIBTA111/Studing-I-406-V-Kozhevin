@@ -2,6 +2,9 @@ import Database from "better-sqlite3";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { create } from "domain";
+import bcrypt from "bcryptjs";
+
+const hash = (pwd) => bcrypt.hashSync(pwd, 10);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const db = new Database(join(__dirname, "conf.db"));
@@ -45,6 +48,13 @@ if (count === 0) {
     "8(980)123-45-67",
     "annapochta@mail.ru",
   );
+  stmt.run(
+    "Conf2027",
+    hash("Demo77"),
+    "Администратор",
+    "8(999)000-00-00",
+    "admin@conf.ru",
+  );
   console.log("Тестовые пользователи на проверку");
 }
 db.exec(`
@@ -61,9 +71,9 @@ if (room === 0) {
         INSERT INTO rooms (name, type, capacity)
         VALUES (?,?,?)
         `);
-  stat.run("Комната №1", "Открыта", "400 человек");
-  stat.run("Комната №2", "Закрыта", "250 человек");
-  stat.run("Комната №3", "На расмотрении", "550 человек");
+  stat.run("Комната №1", "Открыта", "400");
+  stat.run("Комната №2", "Закрыта", "250");
+  stat.run("Комната №3", "На расмотрении", "550");
   console.log("Тестовые комнаты на проверку");
 }
 db.exec(`
@@ -133,14 +143,18 @@ class UserModel {
     return db.prepare(`SELECT * FROM ${this.table} WHERE login=?`).get(login)
       ? true
       : false;
-  } 
-  create({ login, password, fio, phone, email}){
+  }
+  create({ login, password, fio, phone, email }) {
     const hash = bcrypt.hashSync(password, 10);
-    const r = db.prepare(`
+    const r = db
+      .prepare(
+        `
       INSERT INTO ${this.table}(login, password, fio, phone, email)
-      VALYES (?,?,?,?,?)
-      `).run(login, hash, fio, phone, email);
-      return this.findById(r.lastInsertRowid);
+      VALUES (?,?,?,?,?)
+      `,
+      )
+      .run(login, hash, fio, phone, email);
+    return this.findById(r.lastInsertRowid);
   }
 }
 class RoomModel {
@@ -193,15 +207,18 @@ class RequestModel {
       .prepare(`UPDATE ${this.table} SET status = ? WHERE id = ?`)
       .run(status, id);
   }
-  create({ userId, roomId, dateStart, payment}){
-    const r = db.prepare(`
+  create({ userId, roomId, dateStart, payment }) {
+    const r = db
+      .prepare(
+        `
       INSERT INTO ${this.table}(user_id,room_id,date_start, payment)
       VALUES (?,?,?,?)
-      `).run(userId, roomId, dateStart, payment);
-      return this.findById(r.lastInsertRowid);
+      `,
+      )
+      .run(userId, roomId, dateStart, payment);
+    return this.findById(r.lastInsertRowid);
   }
 }
-
 
 export const User = new UserModel();
 export const Room = new RoomModel();
