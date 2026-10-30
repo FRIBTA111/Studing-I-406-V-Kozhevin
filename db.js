@@ -29,21 +29,21 @@ if (count === 0) {
         `);
   stmt.run(
     "ivan",
-    "demo",
+    hash("demo"),
     "Иванов Иван",
     "8(999)123-45-67",
     "ivanpochta@mail.ru",
   );
   stmt.run(
     "petr",
-    "demo",
+    hash("demo"),
     "Петров Пётр",
     "8(900)123-45-67",
     "petrpochta@mail.ru",
   );
   stmt.run(
     "anna",
-    "demo",
+    hash("demo"),
     "Сидорова Анна",
     "8(980)123-45-67",
     "annapochta@mail.ru",

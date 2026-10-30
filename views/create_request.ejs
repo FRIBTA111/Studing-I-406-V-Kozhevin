@@ -3,18 +3,18 @@
 <div class="row justify-content-center">
     <div class="col-md-8 col-12">
         <h1 class="mb-4">Новая заявка</h1>
-        <% if (typeof errors !== 'undefined' && errors.length){ &>
+        <% if (typeof errors !== 'undefined' && errors.length){ %>
             <div class="alert alert-danger">
-                <% errors.forEach(e => { &>
-                    <div><&= e %></div>
+                <% errors.forEach(e => { %>
+                    <div><%= e %></div>
                     <% }) %>
             </div>
-        <& } &>
+        <% } %>
         <form method="POST" action="/create">
             <div class="mb-3">
             <label class="form-label">Помещение</label>
             <select class="form-select" name="room_id" required>
-            <opion value="" disabled selected>Выберите помещение</option>
+            <option value="" disabled selected>Выберите помещение</option>
             <% rooms.forEach(r => { %>
                 <option value="<%= r.id %>"><%= r.type %> - <%= r.name %> (<%= r.capacity %> чел.)</option>
             <% }) %>

@@ -14,13 +14,31 @@
             <a class="navbar-brand" href="/">Конференции.РФ</a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/register">Регистрация</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Вход</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+                    <% if (userId) { %>
+                        <% if (isAdmin) { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin">Панель администратора</a>
+                            </li>
+                            <% } else { %>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/dashboard">Мои заявки</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/create">Новая заявка</a>
+                                </li>
+                                <% } %>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/logout">Выход (<%= fio %>)</a>
+                                </li>
+                                <% } else { %>
+                                    <li class="nav-item"> 
+                                        <a class="nav-link" href="/register">Регистрация</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/login">Вход</a>
+                                    </li>
+                                    <% } %>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>

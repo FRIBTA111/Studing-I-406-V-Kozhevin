@@ -48,6 +48,14 @@ zhopa.use(
 );
 
 zhopa.use((req, res, next) => {
+  res.locals.userId  = req.session.userId || null;
+  res.locals.login   = req.session.login  || null;
+  res.locals.fio     = req.session.fio    || null;
+  res.locals.isAdmin = req.session.login === 'Conf2027';
+  next();
+});
+
+zhopa.use((req, res, next) => {
   if (req.session && req.session.userId) {
     const now = Date.now();
     if (req.session.lastActivity && now - req.session.lastActivity > INACTIVITY_LIMIT) {
@@ -79,7 +87,7 @@ zhopa.get("/register", (req, res) => {
     mode: "register",
     form: {},
     errors: [],
-    flash: null
+    flash: null,
   });
 });
 
@@ -95,7 +103,7 @@ zhopa.post("/register", (req, res) => {
       mode: "register",
       form: req.body,
       errors,
-      flash: null
+      flash: null,
     });
   }
 
@@ -113,22 +121,10 @@ zhopa.post("/register", (req, res) => {
 zhopa.get("/login", (req, res) => {
   const flash = req.session.flash || null;
   delete req.session.flash;
-<<<<<<< HEAD
-  res.render("login", {
-    title: "Авторизация",
+  res.render("auth", {
+    mode: "login",
     errors: [],
-=======
-  
-  res.render("auth", {
-    mode: "login",
-    errors: [], 
     flash: flash,
->>>>>>> 419280f (крупное исправление, подстройка шаблонов под bootstrap, добавление room и request ejs)
-  });
-  res.render("auth", {
-    mode: "login",
-    error: "Неверный логин или пароль",
-    flash: null,
   });
 });
 
@@ -143,7 +139,7 @@ zhopa.post("/login", (req, res) => {
     return res.render("auth", { mode: "login", errors, flash: null });
   }
 
-  const user = User.findByLogin(login); 
+  const user = User.findByLogin(login);
 
   if (user && bcrypt.compareSync(password, user.password)) {
     req.session.userId = user.id;
@@ -157,7 +153,7 @@ zhopa.post("/login", (req, res) => {
   return res.render("auth", {
     mode: "login",
     errors: ["Неверный логин или пароль"],
-    flash: null
+    flash: null,
   });
 });
 
@@ -166,39 +162,21 @@ zhopa.get("/dashboard", requireAuth, (req, res) => {
   res.render("requests_list", { isAdmin: false, requests });
 });
 
-zhopa.get("/create", (req, res) => {
+zhopa.get("/create", requireAuth, (req, res) => {
   const rooms = Room.findAll();
   res.render("create_request", { rooms, errors: [] });
 });
-<<<<<<< HEAD
-zhopa.use((req, res, next) => {
-  if (req.session && req.session.userId) {
-    const now = Date.now();
-    if (
-      req.session.lastActivity &&
-      now - req.session.lastActivity > INACTIVITY_LIMIT
-    ) {
-      return req.session.destroy(() => {
-        res.redirect("/login");
-      });
-    }
-    req.session.lastActivity = now;
-  }
-  next();
-});
-=======
 
 zhopa.post("/create", requireAuth, (req, res) => {
   Request.create({
     userId: req.session.userId,
-    roomId: req.body.roomId,
+    roomId: req.body.room_id,
     dateStart: req.body.date_start,
     payment: req.body.payment,
   });
   res.redirect("/dashboard");
 });
 
->>>>>>> 419280f (крупное исправление, подстройка шаблонов под bootstrap, добавление room и request ejs)
 zhopa.all("/logout", (req, res) => {
   if (req.session) {
     req.session.destroy(() => res.redirect("/login"));
@@ -208,12 +186,15 @@ zhopa.all("/logout", (req, res) => {
 });
 
 zhopa.get("/admin", requireAdmin, (req, res) => {
-  const requests = Request.findAllDetailed ? Request.findAllDetailed() : [];
+  const requests =
+    typeof Request.findAllDetailed === "function"
+      ? Request.findAllDetailed()
+      : [];
   res.render("requests_list", { isAdmin: true, requests });
 });
 
 zhopa.post("/admin", requireAdmin, (req, res) => {
-  if (Request.updateStatus) {
+  if (typeof Request.updateStatus === "function") {
     Request.updateStatus(req.body.id, req.body.status);
   }
   res.redirect("/admin");
