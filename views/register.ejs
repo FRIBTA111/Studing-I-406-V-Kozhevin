@@ -1,0 +1,24 @@
+<h1><%= title %></h1>
+
+<% if (errors.length){%>
+    <ul>
+        <% errors.forEach(e=>{%>
+        <li><%= e %></li>
+        <% }) %>
+    </ul>
+<% } %>
+
+<form method="POST" action="/register">
+        <input name="LastName" placeholder="Фамилия"><br>
+        <input name="FirstName" placeholder="Имя"><br>
+        <input name="FatherName" placeholder="Отчество"><br>
+        <input name="Login" placeholder="Логин"><br>
+        <input name="Password" type="password" placeholder="Пароль"><br>
+        <input name="Email" type="email" placeholder="Почта"><br>
+        <input name="Tel" type="tel" placeholder="Телефон"><br>
+        <button>сохранить пользователя</button>
+        <br>
+        <a href="/login">Перейти в профиль</a>
+        <br>
+        <a href="/hayou">Назад</a>
+        </form>
